@@ -1,0 +1,15 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "mingw",
+      "displayName": "MinGW-w64",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-mingw",
+      "toolchainFile": "${sourceDir}/cmake/mingw64-toolchain.cmake",
+      "cacheVariables": {
+        "glfw3_DIR": "$env{HOME}/opt/glfw-mingw64/lib/cmake/glfw3"
+      }
+    }
+  ]
+}
