@@ -13,24 +13,11 @@ add_executable(ProjectMandarin
     src/glad.c
 )
 
-set(MINGW_RUNTIME_DIR "/usr/x86_64-w64-mingw32/sys-root/mingw/bin")
-
-foreach(dll IN ITEMS
-    libstdc++-6.dll
-    libgcc_s_seh-1.dll
-    libwinpthread-1.dll
+target_link_options(ProjectMandarin PRIVATE
+    -static
+    -static-libgcc
+    -static-libstdc++
 )
-    if(NOT EXISTS "${MINGW_RUNTIME_DIR}/${dll}")
-        message(FATAL_ERROR "Missing MinGW runtime DLL: ${MINGW_RUNTIME_DIR}/${dll}")
-    endif()
-
-    add_custom_command(TARGET ProjectMandarin POST_BUILD
-        COMMAND "${CMAKE_COMMAND}" -E copy_if_different
-                "${MINGW_RUNTIME_DIR}/${dll}"
-                "$<TARGET_FILE_DIR:ProjectMandarin>"
-        VERBATIM
-    )
-endforeach()
 
 target_include_directories(ProjectMandarin PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
