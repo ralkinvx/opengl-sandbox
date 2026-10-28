@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include "system_info.hpp"
 
 void resize_function(GLFWwindow* window, int width, int height) {
         glViewport(0, 0, width, height);
@@ -19,6 +20,7 @@ int main(){
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
     GLFWwindow* window = glfwCreateWindow(800, 600, "Project Mandarin 0.1.0-dev.2", NULL, NULL);
 
@@ -34,6 +36,8 @@ int main(){
     glViewport(0, 0, 800, 600);
     glfwSetFramebufferSizeCallback(window, resize_function);
 
+    print_graphics_info(window);
+    print_system_info();
 
     // ************************************************************************
     // ************************** SHADER SETUP START **************************
@@ -110,20 +114,31 @@ int main(){
 
 
     unsigned int VBO;                                                           // Vertex Buffer Array (VBO) for storing vertex data.
-    unsigned int VAO;                                                           // Vertex Attributes Array (VAO) for storing vertex attribute data.
+    unsigned int VAO; 
+    unsigned int EBO;             
+    glGenBuffers(1, &EBO);                                           // Vertex Attributes Array (VAO) for storing vertex attribute data.
     glGenBuffers(1, &VBO);                                           // Generate the buffer.
+
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);                          
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);                   
     glBindBuffer(GL_ARRAY_BUFFER, VBO);                          // Specify the buffer type (GL_ARRAY_BUFFER, as we'll store an array) and the buffer object.
 
-    glGenVertexArrays(1, &VAO);                                           
-    glBindVertexArray(VAO);                          
 
     float vertices[] = {                                                        // Vertex position attribute float array.
-        -0.5, -0.5, 0.0,                                            // This is an interleaved array (there'll be separate arrays for different attributes such as color)
+        0.5, 0.5, 0.0,                                            // This is an interleaved array (there'll be separate arrays for different attributes such as color)
         0.5, -0.5, 0.0,
-        0.0, 0.5, 0.0
+        -0.5, -0.5, 0.0,
+        -0.5, 0.5, 0.0
+    };
+
+    unsigned int indices[] = {
+        1, 2, 3,
+        3, 1, 0
     };
 
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);             // Store the vertices[] position data in the buffer we've created, and specify the usage type.
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(
         0,                    // Index number of data we want to configure. To configure location we use 0. ("layout (location = 0) in vec3 aPos;" is the first argument in vertex shader)
@@ -148,15 +163,19 @@ int main(){
 
     while (!glfwWindowShouldClose(window)) {
 
+        glEnable(GL_MULTISAMPLE);
+
         input_handler(window);
 
         //glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shaderProgram);                                       // Every rendering call under this line will use the specified shader program.
-        glBindVertexArray(VAO);                          
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
+        glBindVertexArray(VAO);       
+        //glDrawArrays(GL_TRIANGLES, 0, 3);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

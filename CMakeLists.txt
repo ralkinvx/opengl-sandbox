@@ -11,6 +11,7 @@ find_package(glfw3 CONFIG REQUIRED)
 add_executable(ProjectMandarin
     src/main.cpp
     src/glad.c
+    src/system_info.cpp
 )
 
 target_link_options(ProjectMandarin PRIVATE
