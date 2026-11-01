@@ -12,7 +12,7 @@ void print_graphics_info(GLFWwindow *window) {
     std::cout
         << "==================================================================="
            "=============\n"
-           "                    Welcome to Project Mandarin 0.1.0-dev.2!\n"
+           "                    Welcome to Project Mandarin 0.1.0-dev.3!\n"
            "                                 created by Ralkin\n"
            "==================================================================="
            "=============\n"
@@ -31,6 +31,7 @@ void print_graphics_info(GLFWwindow *window) {
     glfwGetWindowSize(window, &win_width, &win_height);
     glGetIntegerv(GL_VIEWPORT, viewport_size);
 
+    std::cout << "C++ " << __cplusplus << "\n";
     std::cout << "OpenGL " << glGetString(GL_VERSION) << "\n";
     std::cout << "GLFW " << glfwGetVersionString() << "\n\n";
 
